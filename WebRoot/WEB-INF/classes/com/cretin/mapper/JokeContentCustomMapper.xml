@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cretin.mapper.JokeContentCustomMapper">
+	<select id="findJokesList" resultMap="findJokesListResultMap">
+		<!-- , -->
+		select
+		joke.*,
+		u.*,(select
+		count(*) count from jokes_content_like js
+		where
+		js.joketext_id=joke.joke_id) count
+		from
+		joke_content joke,user u
+		where
+		u.user_id = joke.user_id
+		order by joke.update_time desc
+	</select>
+
+	<select id="findRecommendJokesList" resultMap="findJokesListResultMap">
+		select
+		joke.*,
+		u.*,(select
+		count(*) count from jokes_content_like js where
+		js.joketext_id=joke.joke_id) count
+		from
+		joke_content joke,user u
+		where
+		u.user_id = joke.user_id
+		order by count desc
+	</select>
+	
+	<select id="findImgJokesList" resultMap="findImgJokesListResultMap">
+		select
+		jokeimg.*,
+		u.*,(select
+		count(*) count from jokes_img_like js where
+		js.jokeimg_id=jokeimg.joke_id) count
+		from
+		joke_img jokeimg,user u
+		where
+		u.user_id = jokeimg.user_id
+		order by jokeimg.update_time desc
+	</select>
+
+	<resultMap type="com.cretin.po.vo.JokeContentVo" id="findJokesListResultMap">
+		<!-- 配置映射的订单信息 -->
+		<!-- id：指定查询列中的唯 一标识，订单信息的中的唯 一标识，如果有多个列组成唯一标识，配置多个id column：订单信息的唯 一标识 
+			列 property：订单信息的唯 一标识 列所映射到Orders中哪个属性 -->
+		<!-- <result column="count" property="count" /> -->
+		<!-- 配置映射的关联的用户信息 -->
+		<!-- association：用于映射关联查询单个对象的信息 property：要将关联查询的用户信息映射到Orders中哪个属性 -->
+		<!-- id：关联查询用户的唯 一标识 column：指定唯 一标识用户信息的列 javaType：映射到user的哪个属性 -->
+		<id column="joke_id" property="jokeId" />
+		<result column="update_time" property="updateTime" />
+		<result column="content" property="content" />
+		<result column="count" property="likeCount" />
+		<association property="orignUser" javaType="com.cretin.po.vo.CustomerUserVo">
+			<!-- id：关联查询用户的唯 一标识 column：指定唯 一标识用户信息的列 javaType：映射到user的哪个属性 -->
+			<id column="user_id" property="userId" />
+			<result column="username" property="username" />
+			<result column="avatar" property="avatar" />
+			<result column="nickname" property="nickname" />
+			<result column="age" property="age" />
+			<result column="sex" property="sex" />
+		</association>
+	</resultMap>
+	
+	<resultMap type="com.cretin.po.vo.JokeImageVo" id="findImgJokesListResultMap">
+		<!-- 配置映射的订单信息 -->
+		<!-- id：指定查询列中的唯 一标识，订单信息的中的唯 一标识，如果有多个列组成唯一标识，配置多个id column：订单信息的唯 一标识 
+			列 property：订单信息的唯 一标识 列所映射到Orders中哪个属性 -->
+		<!-- <result column="count" property="count" /> -->
+		<!-- 配置映射的关联的用户信息 -->
+		<!-- association：用于映射关联查询单个对象的信息 property：要将关联查询的用户信息映射到Orders中哪个属性 -->
+		<!-- id：关联查询用户的唯 一标识 column：指定唯 一标识用户信息的列 javaType：映射到user的哪个属性 -->
+		<id column="joke_id" property="jokeId" />
+		<result column="update_time" property="updateTime" />
+		<result column="content" property="content" />
+		<result column="count" property="likeCount" />
+		<result column="image_url" property="imageUrl" />
+		<association property="orignUser" javaType="com.cretin.po.vo.CustomerUserVo">
+			<!-- id：关联查询用户的唯 一标识 column：指定唯 一标识用户信息的列 javaType：映射到user的哪个属性 -->
+			<id column="user_id" property="userId" />
+			<result column="username" property="username" />
+			<result column="avatar" property="avatar" />
+			<result column="nickname" property="nickname" />
+			<result column="age" property="age" />
+			<result column="sex" property="sex" />
+		</association>
+	</resultMap>
+</mapper>
