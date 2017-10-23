@@ -88,6 +88,14 @@ public interface JokesService {
 	public int unlike(String jokes_id, String userid, int type);
 
 
+	/**
+	 * 新增图片笑话
+	 * @param jokeImg
+	 * @return
+	 */
+	public int addImgJoke(JokeImg jokeImg);
+
+
 	// //根据id查询商品信息
 	// /**
 	// *

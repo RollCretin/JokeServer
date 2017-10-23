@@ -33,12 +33,14 @@ import com.cretin.mapper.UserMapper;
 import com.cretin.po.JokeContent;
 import com.cretin.po.JokeImg;
 import com.cretin.po.User;
+import com.cretin.po.VerificationCode;
 import com.cretin.po.vo.CustomerUserVo;
 import com.cretin.po.vo.JokesQueryVo;
 import com.cretin.service.JokesService;
 import com.cretin.service.UserService;
 import com.cretin.service.impl.JokesServiceImpl;
 import com.cretin.utils.MD5Utils;
+import com.cretin.utils.PhoneFormatCheckUtils;
 import com.cretin.utils.StringUtils;
 import com.cretin.utils.UUIDUtils;
 
@@ -71,7 +73,7 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping("/login")
-	public @ResponseBody BaseResponce<CustomerUserVo> jokesList(@RequestParam("username") String username,
+	public @ResponseBody BaseResponce<CustomerUserVo> login(@RequestParam("username") String username,
 			@RequestParam("password") String password, HttpSession session) {
 		// 先移除登录状态
 		session.removeAttribute(LogConstant.LOGIN_USER);
@@ -103,6 +105,21 @@ public class UserController {
 			return responce;
 		}
 	}
+	
+	/**
+	 * 用户登录
+	 * 
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping("/logout")
+	public @ResponseBody BaseResponce<?> logout(HttpSession session) {
+		// 先移除登录状态
+		session.removeAttribute(LogConstant.LOGIN_USER);
+		session.removeAttribute(LogConstant.LOGIN_USERID);
+		session.invalidate();
+		return new BaseResponce<>(1,"退出登录成功");
+	}
 
 	/**
 	 * 用户注册 发送验证码
@@ -115,10 +132,40 @@ public class UserController {
 		if (StringUtils.isEmpty(phone)) {
 			return new BaseResponce<>(0, "手机号不能为空");
 		}
+		if (!PhoneFormatCheckUtils.isChinaPhoneLegal(phone)) {
+			return new BaseResponce<>(0, "手机号格式不正确");
+		}
 		try {
+			// 首先检测该手机号是否已经注册过了
+			if (((List<User>) userService.findUserByPhone(phone)).size() > 0) {
+				// 改手机号已经被注册
+				return new BaseResponce<>(0, "该手机号已被注册，请直接登录");
+			}
+			// 获取最近一分钟内phone发送的验证码的条数
+			int nums = userService.findSmsWithinOneMinute(phone);
+			if (nums != 0) {
+				return new BaseResponce<>(0, "验证码发送太快，请稍后再试");
+			}
 			String code = StringUtils.getCode();
 			session.setAttribute("verification_code", code);
+			//阿里那边要收费 一般不用
 			SendSmsResponse codeEntity = userService.sendCode(phone, code);
+//			SendSmsResponse codeEntity = new SendSmsResponse();//模拟发送短信
+			codeEntity.setCode("OK");
+			VerificationCode verificationCode = new VerificationCode();
+			verificationCode.setSmsId(UUIDUtils.getUuid());
+			verificationCode.setSmscontent("验证码" + code + "，您正进行掌中乐的注册操作，打死不告诉别人！");
+			verificationCode.setSmstel(phone);
+			verificationCode.setSmscode(code);
+			if ("OK".equals(codeEntity.getCode())) {
+				// 短信发送成功
+				verificationCode.setSmsstatus(1);
+			} else {
+				verificationCode.setSmsstatus(0);
+			}
+			// 插入数据到数据库 不管是否成功
+			userService.addUserVerification(verificationCode);
+
 			if ("OK".equals(codeEntity.getCode())) {
 				// 短信发送成功
 				return new BaseResponce<>(1, "验证码发送成功");
@@ -130,6 +177,8 @@ public class UserController {
 				return new BaseResponce<>(0, "非法手机号");
 			} else if ("isv.MOBILE_COUNT_OVER_LIMIT".equals(codeEntity.getCode())) {
 				return new BaseResponce<>(0, "手机号码数量超过限制");
+			} else if ("isv.BUSINESS_LIMIT_CONTROL".equals(codeEntity.getCode())) {
+				return new BaseResponce<>(0, "发送频率太快");
 			} else if ("isv.PARAM_LENGTH_LIMIT".equals(codeEntity.getCode())) {
 				return new BaseResponce<>(0, "参数超出长度限制");
 			} else {
@@ -148,7 +197,8 @@ public class UserController {
 	 */
 	@RequestMapping("/reg/register")
 	public @ResponseBody BaseResponce<?> registerUser(@RequestParam("phone") String phone,
-			@RequestParam("password") String password, @RequestParam("code") String code, HttpSession session,HttpServletRequest request) {
+			@RequestParam("password") String password, @RequestParam("code") String code, HttpSession session,
+			HttpServletRequest request) {
 		if (StringUtils.isEmpty(phone)) {
 			return new BaseResponce<>(0, "手机号不能为空");
 		} else if (StringUtils.isEmpty(password)) {
@@ -156,7 +206,6 @@ public class UserController {
 		} else if (StringUtils.isEmpty(code)) {
 			return new BaseResponce<>(0, "验证码不能为空");
 		}
-
 		try {
 			String valiCode = (String) session.getAttribute("verification_code");
 			if (!StringUtils.isEmpty(valiCode)) {
@@ -169,17 +218,25 @@ public class UserController {
 			// 移除session中的数据
 			session.removeAttribute("verification_code");
 			// 验证码正确 开始注册
-			User user =  new User();
+			User user = new User();
 			user.setUserId(UUIDUtils.getUuid());
 			user.setAge(0);
 			user.setAvatar("/img/user/default_avatar.jpg");
-			user.setNickname("用户_"+StringUtils.getDefaultNickName());
+			user.setNickname("用户_" + StringUtils.getDefaultNickName());
 			user.setPassword(MD5Utils.EncoderByMd5(password));
 			user.setUsername(phone);
-			userService.addUserAccount(user);
+			user.setSex(0);
+			user.setTelephone(phone);
+			int result = userService.addUserAccount(user);
+			if (result != 0) {
+				return new BaseResponce<>(1, "注册成功");
+			} else {
+				return new BaseResponce<>(0, "注册失败");
+			}
 		} catch (Exception e) {
 			return new BaseResponce<>(0, "服务器异常");
 		}
-		return null;
 	}
+	
+	
 }

@@ -32,6 +32,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		}
 		HttpSession session = request.getSession();
 		CustomerUserVo user = (CustomerUserVo) session.getAttribute(LogConstant.LOGIN_USER);
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		System.out.println("userid:"+userid);
 		// 用户未登录
 		if (null == user) {
 			if (login.value() == ResultType.json) {
@@ -47,6 +49,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				pw.close();
 			}
 			return false;
+		}else {
+			System.out.println("user:"+user.getUserId());
 		}
 		return true;
 	}

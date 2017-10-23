@@ -19,6 +19,8 @@ public class User {
 
     private Date registerTime;
 
+    private String telephone;
+
     public String getUserId() {
         return userId;
     }
@@ -81,5 +83,13 @@ public class User {
 
     public void setRegisterTime(Date registerTime) {
         this.registerTime = registerTime;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone == null ? null : telephone.trim();
     }
 }

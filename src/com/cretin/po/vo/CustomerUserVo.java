@@ -1,5 +1,6 @@
 package com.cretin.po.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -9,7 +10,9 @@ import java.util.Date;
 * @author cretin
 * @date 2017年10月20日
 */
-public class CustomerUserVo {
+public class CustomerUserVo implements Serializable{
+	private static final long serialVersionUID = 1810382113491528817L;
+
 	private String userId;
 
     private String username;

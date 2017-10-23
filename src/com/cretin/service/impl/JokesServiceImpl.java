@@ -377,4 +377,9 @@ public class JokesServiceImpl implements JokesService {
 			}
 		}
 	}
+
+	@Override
+	public int addImgJoke(JokeImg jokeImg) {
+		return jokeImgMapper.insert(jokeImg);
+	}
 }

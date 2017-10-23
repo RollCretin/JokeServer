@@ -25,5 +25,9 @@ public class LogConstant {
 	/**
 	 * 用户登录信息的userid 的 session 的 key值
 	 */
-	public static final String LOGIN_USERID = "userid";
+	public static final String LOGIN_USERID = "jokes_userid";
+	/**
+	 * 存放图片的路径根目录
+	 */
+	public static final String PIC_DEIRECTORY = "/Users/cretin/jokesPic/";
 }

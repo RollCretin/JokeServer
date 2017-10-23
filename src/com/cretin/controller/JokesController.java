@@ -1,19 +1,28 @@
 package com.cretin.controller;
 
+import java.io.File;
+import java.util.Calendar;
+import java.util.UUID;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cretin.app.BaseResponce;
 import com.cretin.app.LogConstant;
 import com.cretin.intercepter.Login;
+import com.cretin.po.JokeImg;
 import com.cretin.po.vo.JokeContentVo;
 import com.cretin.po.vo.JokeImageVo;
 import com.cretin.po.vo.JokesQueryVo;
 import com.cretin.service.JokesService;
+import com.cretin.utils.StringUtils;
+import com.cretin.utils.UUIDUtils;
 
 /**
  * 
@@ -47,25 +56,24 @@ public class JokesController {
 	 * @return
 	 */
 	@RequestMapping("/jokesList")
-	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesList(Integer page,HttpSession session) {
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesList(Integer page, HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeContentVo>> responce = null;
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
-		System.out.println("userid-----"+userid);
-		System.out.println("sessionid------"+session.getId());
+		System.out.println("userid-----" + userid);
+		System.out.println("sessionid------" + session.getId());
 		if (page == null) {
 			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 			responce.setMessage("page不能为空");
 			return responce;
 		}
 		try {
-			responce = jokesService.findJokesList(page,userid);
+			responce = jokesService.findJokesList(page, userid);
 		} catch (Exception e) {
 			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 			responce.setMessage("服务器异常");
 		}
 		return responce;
 	}
-	
 
 	/**
 	 * 分页查询推荐的文字段子
@@ -74,7 +82,7 @@ public class JokesController {
 	 * @return
 	 */
 	@RequestMapping("/jokesRecList")
-	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesRecList(Integer page,HttpSession session) {
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesRecList(Integer page, HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeContentVo>> responce = null;
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		if (page == null) {
@@ -83,7 +91,7 @@ public class JokesController {
 			return responce;
 		}
 		try {
-			responce = jokesService.findJokesRecList(page,userid);
+			responce = jokesService.findJokesRecList(page, userid);
 		} catch (Exception e) {
 			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 			responce.setMessage("服务器异常");
@@ -98,7 +106,7 @@ public class JokesController {
 	 * @return
 	 */
 	@RequestMapping("/jokesImgList")
-	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgList(Integer page,HttpSession session) {
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgList(Integer page, HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeImageVo>> responce = null;
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		if (page == null) {
@@ -107,7 +115,7 @@ public class JokesController {
 			return responce;
 		}
 		try {
-			responce = jokesService.findJokesImgList(page,userid);
+			responce = jokesService.findJokesImgList(page, userid);
 		} catch (Exception e) {
 			responce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
 			responce.setMessage("服务器异常");
@@ -122,7 +130,7 @@ public class JokesController {
 	 * @return
 	 */
 	@RequestMapping("/jokesImgRecList")
-	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgRecList(Integer page,HttpSession session) {
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgRecList(Integer page, HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeImageVo>> responce = null;
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		if (page == null) {
@@ -131,7 +139,7 @@ public class JokesController {
 			return responce;
 		}
 		try {
-			responce = jokesService.findJokesImgRecList(page,userid);
+			responce = jokesService.findJokesImgRecList(page, userid);
 		} catch (Exception e) {
 			responce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
 			responce.setMessage("服务器异常");
@@ -152,7 +160,7 @@ public class JokesController {
 		BaseResponce<?> baseResponce = new BaseResponce<>();
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		try {
-			int status = jokesService.like(jokes_id, userid,0);
+			int status = jokesService.like(jokes_id, userid, 0);
 			// 点赞成功返回1 点赞失败返回0 已点赞返回2
 			if (status == 1) {
 				baseResponce.setCode(1);
@@ -174,6 +182,7 @@ public class JokesController {
 
 	/**
 	 * 文字段子取消点赞
+	 * 
 	 * @param jokes_id
 	 * @param session
 	 * @return
@@ -184,7 +193,7 @@ public class JokesController {
 		BaseResponce<?> baseResponce = new BaseResponce<>();
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		try {
-			int status = jokesService.unlike(jokes_id, userid,0);
+			int status = jokesService.unlike(jokes_id, userid, 0);
 			// 点赞成功返回1 点赞失败返回0 已点赞返回2
 			if (status == 1) {
 				baseResponce.setCode(1);
@@ -203,7 +212,7 @@ public class JokesController {
 		}
 		return baseResponce;
 	}
-	
+
 	/**
 	 * 点赞
 	 * 
@@ -217,7 +226,7 @@ public class JokesController {
 		BaseResponce<?> baseResponce = new BaseResponce<>();
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		try {
-			int status = jokesService.like(jokes_id, userid,1);
+			int status = jokesService.like(jokes_id, userid, 1);
 			// 点赞成功返回1 点赞失败返回0 已点赞返回2
 			if (status == 1) {
 				baseResponce.setCode(1);
@@ -236,9 +245,10 @@ public class JokesController {
 		}
 		return baseResponce;
 	}
-	
+
 	/**
 	 * 文字段子取消点赞
+	 * 
 	 * @param jokes_id
 	 * @param session
 	 * @return
@@ -249,7 +259,7 @@ public class JokesController {
 		BaseResponce<?> baseResponce = new BaseResponce<>();
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		try {
-			int status = jokesService.unlike(jokes_id, userid,1);
+			int status = jokesService.unlike(jokes_id, userid, 1);
 			// 点赞成功返回1 点赞失败返回0 已点赞返回2
 			if (status == 1) {
 				baseResponce.setCode(1);
@@ -267,5 +277,47 @@ public class JokesController {
 			baseResponce.setMessage("服务器异常");
 		}
 		return baseResponce;
+	}
+
+	@Login
+	@RequestMapping("/img/addJoke")
+	public @ResponseBody BaseResponce<?> addJoke(@RequestParam("content") String content, MultipartFile image,
+			HttpSession session) throws Exception {
+		if(StringUtils.isEmpty(content))
+			return new BaseResponce<>(0,"标题不能为空");
+		if(image==null)
+			return new BaseResponce<>(0,"请上传图片");
+		// 组装数据
+		JokeImg jokeImg = new JokeImg();
+		jokeImg.setJokeId(UUIDUtils.getUuid());
+		String userId = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		jokeImg.setUserId(userId);
+		jokeImg.setContent(content);
+		// 原始名称
+		String originalFilename = image.getOriginalFilename();
+		// 上传图片
+		if (image != null && originalFilename != null && originalFilename.length() > 0) {
+			// 存储图片的物理路径
+			String pic_path = LogConstant.PIC_DEIRECTORY;
+			// 新的图片名称
+			Calendar cal = Calendar.getInstance();
+	        int year = cal.get(Calendar.YEAR);//获取年份
+	        int month=cal.get(Calendar.MONTH);//获取月份 
+	        int day=cal.get(Calendar.DATE);//获取日 
+			String newFileName = "jokes/"+year+"/"+month+"/"+day+"/"+UUIDUtils.getUuid() + originalFilename.substring(originalFilename.lastIndexOf("."));
+			// 新图片
+			File newFile = new File(pic_path + newFileName);
+			if(!newFile.exists())
+				newFile.mkdirs();
+			// 将内存中的数据写入磁盘
+			image.transferTo(newFile);
+			jokeImg.setImageUrl("img/"+newFileName);
+		}
+		int state = jokesService.addImgJoke(jokeImg);
+		if (state != 0) {
+			return new BaseResponce<>(1, "提交成功");
+		} else {
+			return new BaseResponce<>(0, "提交失败");
+		}
 	}
 }

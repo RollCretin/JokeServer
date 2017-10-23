@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cretin.mapper.VerificationCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.cretin.po.VerificationCode" >
+    <id column="sms_id" property="smsId" jdbcType="VARCHAR" />
+    <result column="smstel" property="smstel" jdbcType="VARCHAR" />
+    <result column="smscontent" property="smscontent" jdbcType="VARCHAR" />
+    <result column="smsstatus" property="smsstatus" jdbcType="INTEGER" />
+    <result column="smscode" property="smscode" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    sms_id, smstel, smscontent, smsstatus, smscode, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.cretin.po.VerificationCodeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from verification_code
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from verification_code
+    where sms_id = #{smsId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from verification_code
+    where sms_id = #{smsId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.cretin.po.VerificationCodeExample" >
+    delete from verification_code
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.cretin.po.VerificationCode" >
+    insert into verification_code (sms_id, smstel, smscontent, 
+      smsstatus, smscode, update_time
+      )
+    values (#{smsId,jdbcType=VARCHAR}, #{smstel,jdbcType=VARCHAR}, #{smscontent,jdbcType=VARCHAR}, 
+      #{smsstatus,jdbcType=INTEGER}, #{smscode,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cretin.po.VerificationCode" >
+    insert into verification_code
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="smsId != null" >
+        sms_id,
+      </if>
+      <if test="smstel != null" >
+        smstel,
+      </if>
+      <if test="smscontent != null" >
+        smscontent,
+      </if>
+      <if test="smsstatus != null" >
+        smsstatus,
+      </if>
+      <if test="smscode != null" >
+        smscode,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="smsId != null" >
+        #{smsId,jdbcType=VARCHAR},
+      </if>
+      <if test="smstel != null" >
+        #{smstel,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="smsstatus != null" >
+        #{smsstatus,jdbcType=INTEGER},
+      </if>
+      <if test="smscode != null" >
+        #{smscode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.cretin.po.VerificationCodeExample" resultType="java.lang.Integer" >
+    select count(*) from verification_code
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update verification_code
+    <set >
+      <if test="record.smsId != null" >
+        sms_id = #{record.smsId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smstel != null" >
+        smstel = #{record.smstel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smscontent != null" >
+        smscontent = #{record.smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smsstatus != null" >
+        smsstatus = #{record.smsstatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.smscode != null" >
+        smscode = #{record.smscode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update verification_code
+    set sms_id = #{record.smsId,jdbcType=VARCHAR},
+      smstel = #{record.smstel,jdbcType=VARCHAR},
+      smscontent = #{record.smscontent,jdbcType=VARCHAR},
+      smsstatus = #{record.smsstatus,jdbcType=INTEGER},
+      smscode = #{record.smscode,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cretin.po.VerificationCode" >
+    update verification_code
+    <set >
+      <if test="smstel != null" >
+        smstel = #{smstel,jdbcType=VARCHAR},
+      </if>
+      <if test="smscontent != null" >
+        smscontent = #{smscontent,jdbcType=VARCHAR},
+      </if>
+      <if test="smsstatus != null" >
+        smsstatus = #{smsstatus,jdbcType=INTEGER},
+      </if>
+      <if test="smscode != null" >
+        smscode = #{smscode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where sms_id = #{smsId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cretin.po.VerificationCode" >
+    update verification_code
+    set smstel = #{smstel,jdbcType=VARCHAR},
+      smscontent = #{smscontent,jdbcType=VARCHAR},
+      smsstatus = #{smsstatus,jdbcType=INTEGER},
+      smscode = #{smscode,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where sms_id = #{smsId,jdbcType=VARCHAR}
+  </update>
+</mapper>
