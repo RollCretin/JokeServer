@@ -11,8 +11,6 @@ public class JokeImg {
 
     private String userId;
 
-    private Integer likeCount;
-
     private String content;
 
     public String getJokeId() {
@@ -45,14 +43,6 @@ public class JokeImg {
 
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
-    }
-
-    public Integer getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(Integer likeCount) {
-        this.likeCount = likeCount;
     }
 
     public String getContent() {

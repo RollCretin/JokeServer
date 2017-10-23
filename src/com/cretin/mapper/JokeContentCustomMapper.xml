@@ -1,45 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cretin.mapper.JokeContentCustomMapper">
-	<select id="findJokesList" resultMap="findJokesListResultMap">
-		<!-- , -->
+	<!-- 查询所有的文字段子 时间排序 -->
+	<select id="findJokesList" parameterType="java.lang.String"
+		resultMap="findJokesListResultMap">
 		select
-		joke.*,
+		joke.joke_id,
+        joke.content,
+        joke.update_time,
 		u.*,(select
-		count(*) count from jokes_content_like js
+		count(*) count from
+		jokes_content_like js
 		where
 		js.joketext_id=joke.joke_id) count
+		,(select
+		count(*) spot from jokes_content_like js
+		where
+		js.joketext_id=joke.joke_id and js.user_id=#{userId,jdbcType=VARCHAR}) spot
 		from
 		joke_content joke,user u
 		where
 		u.user_id = joke.user_id
-		order by joke.update_time desc
+		order by
+		joke.update_time desc
 	</select>
-
-	<select id="findRecommendJokesList" resultMap="findJokesListResultMap">
+	<!-- 查询所有的文字段子 热度排序 -->
+	<select id="findRecommendJokesList" parameterType="java.lang.String" resultMap="findJokesListResultMap">
 		select
-		joke.*,
+		joke.joke_id,
+        joke.content,
+        joke.update_time,
 		u.*,(select
 		count(*) count from jokes_content_like js where
-		js.joketext_id=joke.joke_id) count
+		js.joketext_id=joke.joke_id) count,
+		(select
+		count(*) spot from
+		jokes_content_like js
+		where
+		js.joketext_id=joke.joke_id and
+		js.user_id=#{userId,jdbcType=VARCHAR}) spot
 		from
 		joke_content joke,user u
 		where
-		u.user_id = joke.user_id
+		u.user_id =
+		joke.user_id
 		order by count desc
 	</select>
-	
-	<select id="findImgJokesList" resultMap="findImgJokesListResultMap">
+	<!-- 查询所有的图片段子 时间排序 -->
+	<select id="findImgJokesList" parameterType="java.lang.String" resultMap="findImgJokesListResultMap">
 		select
-		jokeimg.*,
+		jokeimg.joke_id,
+        jokeimg.content,
+        jokeimg.update_time,
+        jokeimg.image_url,
 		u.*,(select
 		count(*) count from jokes_img_like js where
-		js.jokeimg_id=jokeimg.joke_id) count
+		js.jokeimg_id=jokeimg.joke_id) count,
+		(select
+		count(*) spot from
+		jokes_img_like js
+		where
+		js.jokeimg_id=jokeimg.joke_id and
+		js.user_id=#{userId,jdbcType=VARCHAR}) spot
 		from
 		joke_img jokeimg,user u
 		where
-		u.user_id = jokeimg.user_id
+		u.user_id =
+		jokeimg.user_id
 		order by jokeimg.update_time desc
+	</select>
+	<!-- 查询所有的图片段子 热度排序 -->
+	<select id="findRecommendImgJokesList" parameterType="java.lang.String" resultMap="findImgJokesListResultMap">
+		select
+		jokeimg.joke_id,
+        jokeimg.content,
+        jokeimg.update_time,
+        jokeimg.image_url,
+		u.*,(select
+		count(*) count from jokes_img_like js where
+		js.jokeimg_id=jokeimg.joke_id) count,
+		(select
+		count(*) spot from
+		jokes_img_like js
+		where
+		js.jokeimg_id=jokeimg.joke_id and
+		js.user_id=#{userId,jdbcType=VARCHAR}) spot
+		from
+		joke_img jokeimg,user u
+		where
+		u.user_id =
+		jokeimg.user_id
+		order by count desc
 	</select>
 
 	<resultMap type="com.cretin.po.vo.JokeContentVo" id="findJokesListResultMap">
@@ -54,6 +105,7 @@
 		<result column="update_time" property="updateTime" />
 		<result column="content" property="content" />
 		<result column="count" property="likeCount" />
+		<result column="spot" property="hasSpot" />
 		<association property="orignUser" javaType="com.cretin.po.vo.CustomerUserVo">
 			<!-- id：关联查询用户的唯 一标识 column：指定唯 一标识用户信息的列 javaType：映射到user的哪个属性 -->
 			<id column="user_id" property="userId" />
@@ -64,7 +116,7 @@
 			<result column="sex" property="sex" />
 		</association>
 	</resultMap>
-	
+
 	<resultMap type="com.cretin.po.vo.JokeImageVo" id="findImgJokesListResultMap">
 		<!-- 配置映射的订单信息 -->
 		<!-- id：指定查询列中的唯 一标识，订单信息的中的唯 一标识，如果有多个列组成唯一标识，配置多个id column：订单信息的唯 一标识 
@@ -77,6 +129,7 @@
 		<result column="update_time" property="updateTime" />
 		<result column="content" property="content" />
 		<result column="count" property="likeCount" />
+		<result column="spot" property="hasSpot" />
 		<result column="image_url" property="imageUrl" />
 		<association property="orignUser" javaType="com.cretin.po.vo.CustomerUserVo">
 			<!-- id：关联查询用户的唯 一标识 column：指定唯 一标识用户信息的列 javaType：映射到user的哪个属性 -->

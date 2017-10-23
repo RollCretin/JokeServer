@@ -64,7 +64,7 @@ public class JokesServiceImpl implements JokesService {
 	private JokeContentCustomMapper jokeContentCustomMapper;
 
 	@Override
-	public BaseResponce<JokesQueryVo<JokeContentVo>> findJokesList(Integer page) throws Exception {
+	public BaseResponce<JokesQueryVo<JokeContentVo>> findJokesList(Integer page,String user_id) throws Exception {
 		BaseResponce<JokesQueryVo<JokeContentVo>> baseResponce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 		JokesQueryVo<JokeContentVo> jokesQueryVo = new JokesQueryVo<JokeContentVo>();
 		// 获取第1页，10条内容，默认查询总数count
@@ -72,7 +72,7 @@ public class JokesServiceImpl implements JokesService {
 		int limit = 10;
 		jokesQueryVo.setLimit(limit);
 		PageHelper.startPage(page, limit);
-		List<JokeContentVo> jokesListVo = jokeContentCustomMapper.findJokesList();
+		List<JokeContentVo> jokesListVo = jokeContentCustomMapper.findJokesList(user_id);
 		for (JokeContentVo jokeContent : jokesListVo) {
 			// 时间规则 小于一分钟显示多少秒 小于一个小时的显示分钟 小于一天的显示小时 小于5天的显示天 大于5天的展示具体时间
 			long time = jokeContent.getUpdateTime().getTime();
@@ -84,9 +84,57 @@ public class JokesServiceImpl implements JokesService {
 				timeResult = (leftTime / 1000) + "秒前";
 			} else if (miniute < 60) {
 				timeResult = miniute + "分钟前";
-			} else if (miniute < 60 * 60 * 24) {
+			} else if (miniute < 60 * 24) {
 				timeResult = miniute / 60 + "小时前";
-			} else if (miniute < 60 * 60 * 24 * 5) {
+			} else if (miniute < 60  * 24 * 5) {
+				timeResult = miniute / 60 / 24 + "天前";
+			} else {
+				timeResult = StringUtils.getFormatTime(time);
+			}
+			jokeContent.setShowTime(timeResult);
+		}
+		jokesQueryVo.setJokesList(jokesListVo);
+		// 设置返回的总记录数
+		PageInfo<JokeContentVo> pageInfo = new PageInfo<>(jokesListVo);
+		// 设置当前页数
+		jokesQueryVo.setPage(page);
+		// 设置总记录数
+		int totalCount = 0;
+		totalCount = (int) pageInfo.getTotal();
+		jokesQueryVo.setTotalCount(totalCount);
+		// 设置总页面数
+		int totalPage = 0;
+		totalPage = totalCount % limit == 0 ? (totalCount / limit) : (totalCount / limit + 1);
+		jokesQueryVo.setTotalPage(totalPage);
+		baseResponce.setCode(1);
+		baseResponce.setData(jokesQueryVo);
+		return baseResponce;
+	}
+	
+	@Override
+	public BaseResponce<JokesQueryVo<JokeContentVo>> findJokesRecList(Integer page,String user_id) throws Exception {
+		BaseResponce<JokesQueryVo<JokeContentVo>> baseResponce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
+		JokesQueryVo<JokeContentVo> jokesQueryVo = new JokesQueryVo<JokeContentVo>();
+		// 获取第1页，10条内容，默认查询总数count
+		// 设置每一页的记录数
+		int limit = 10;
+		jokesQueryVo.setLimit(limit);
+		PageHelper.startPage(page, limit);
+		List<JokeContentVo> jokesListVo = jokeContentCustomMapper.findRecommendJokesList(user_id);
+		for (JokeContentVo jokeContent : jokesListVo) {
+			// 时间规则 小于一分钟显示多少秒 小于一个小时的显示分钟 小于一天的显示小时 小于5天的显示天 大于5天的展示具体时间
+			long time = jokeContent.getUpdateTime().getTime();
+			String timeResult = "";
+			// 计算时间
+			long leftTime = System.currentTimeMillis() - time;
+			int miniute = (int) (leftTime / 1000 / 60);
+			if (leftTime / 1000 < 60) {
+				timeResult = (leftTime / 1000) + "秒前";
+			} else if (miniute < 60) {
+				timeResult = miniute + "分钟前";
+			} else if (miniute < 60 * 24) {
+				timeResult = miniute / 60 + "小时前";
+			} else if (miniute < 60  * 24 * 5) {
 				timeResult = miniute / 60 / 24 + "天前";
 			} else {
 				timeResult = StringUtils.getFormatTime(time);
@@ -112,7 +160,7 @@ public class JokesServiceImpl implements JokesService {
 	}
 
 	@Override
-	public BaseResponce<JokesQueryVo<JokeImageVo>> findJokesImgList(Integer page) throws Exception {
+	public BaseResponce<JokesQueryVo<JokeImageVo>> findJokesImgList(Integer page,String user_id) throws Exception {
 		BaseResponce<JokesQueryVo<JokeImageVo>> baseResponce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
 		JokesQueryVo<JokeImageVo> jokesQueryVo = new JokesQueryVo<JokeImageVo>();
 		// 获取第1页，10条内容，默认查询总数count
@@ -120,7 +168,7 @@ public class JokesServiceImpl implements JokesService {
 		int limit = 10;
 		jokesQueryVo.setLimit(limit);
 		PageHelper.startPage(page, limit);
-		List<JokeImageVo> jokesListVo = jokeContentCustomMapper.findImgJokesList();
+		List<JokeImageVo> jokesListVo = jokeContentCustomMapper.findImgJokesList(user_id);
 		for (JokeImageVo jokeContent : jokesListVo) {
 			// 时间规则 小于一分钟显示多少秒 小于一个小时的显示分钟 小于一天的显示小时 小于5天的显示天 大于5天的展示具体时间
 			long time = jokeContent.getUpdateTime().getTime();
@@ -132,9 +180,57 @@ public class JokesServiceImpl implements JokesService {
 				timeResult = (leftTime / 1000) + "秒前";
 			} else if (miniute < 60) {
 				timeResult = miniute + "分钟前";
-			} else if (miniute < 60 * 60 * 24) {
+			} else if (miniute < 60 * 24) {
 				timeResult = miniute / 60 + "小时前";
-			} else if (miniute < 60 * 60 * 24 * 5) {
+			} else if (miniute < 60  * 24 * 5) {
+				timeResult = miniute / 60 / 24 + "天前";
+			} else {
+				timeResult = StringUtils.getFormatTime(time);
+			}
+			jokeContent.setShowTime(timeResult);
+		}
+		jokesQueryVo.setJokesList(jokesListVo);
+		// 设置返回的总记录数
+		PageInfo<JokeImageVo> pageInfo = new PageInfo<>(jokesListVo);
+		// 设置当前页数
+		jokesQueryVo.setPage(page);
+		// 设置总记录数
+		int totalCount = 0;
+		totalCount = (int) pageInfo.getTotal();
+		jokesQueryVo.setTotalCount(totalCount);
+		// 设置总页面数
+		int totalPage = 0;
+		totalPage = totalCount % limit == 0 ? (totalCount / limit) : (totalCount / limit + 1);
+		jokesQueryVo.setTotalPage(totalPage);
+		baseResponce.setCode(1);
+		baseResponce.setData(jokesQueryVo);
+		return baseResponce;
+	}
+	
+	@Override
+	public BaseResponce<JokesQueryVo<JokeImageVo>> findJokesImgRecList(Integer page,String user_id) throws Exception {
+		BaseResponce<JokesQueryVo<JokeImageVo>> baseResponce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
+		JokesQueryVo<JokeImageVo> jokesQueryVo = new JokesQueryVo<JokeImageVo>();
+		// 获取第1页，10条内容，默认查询总数count
+		// 设置每一页的记录数
+		int limit = 10;
+		jokesQueryVo.setLimit(limit);
+		PageHelper.startPage(page, limit);
+		List<JokeImageVo> jokesListVo = jokeContentCustomMapper.findRecommendImgJokesList(user_id);
+		for (JokeImageVo jokeContent : jokesListVo) {
+			// 时间规则 小于一分钟显示多少秒 小于一个小时的显示分钟 小于一天的显示小时 小于5天的显示天 大于5天的展示具体时间
+			long time = jokeContent.getUpdateTime().getTime();
+			String timeResult = "";
+			// 计算时间
+			long leftTime = System.currentTimeMillis() - time;
+			int miniute = (int) (leftTime / 1000 / 60);
+			if (leftTime / 1000 < 60) {
+				timeResult = (leftTime / 1000) + "秒前";
+			} else if (miniute < 60) {
+				timeResult = miniute + "分钟前";
+			} else if (miniute < 60 * 24) {
+				timeResult = miniute / 60 + "小时前";
+			} else if (miniute < 60  * 24 * 5) {
 				timeResult = miniute / 60 / 24 + "天前";
 			} else {
 				timeResult = StringUtils.getFormatTime(time);

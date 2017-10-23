@@ -6,7 +6,6 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
-    <result column="like_count" property="likeCount" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.cretin.po.JokeImg" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
@@ -70,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    joke_id, update_time, image_url, user_id, like_count
+    joke_id, update_time, image_url, user_id
   </sql>
   <sql id="Blob_Column_List" >
     content
@@ -125,11 +124,9 @@
   </delete>
   <insert id="insert" parameterType="com.cretin.po.JokeImg" >
     insert into joke_img (joke_id, update_time, image_url, 
-      user_id, like_count, content
-      )
+      user_id, content)
     values (#{jokeId,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{imageUrl,jdbcType=VARCHAR}, 
-      #{userId,jdbcType=VARCHAR}, #{likeCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
-      )
+      #{userId,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cretin.po.JokeImg" >
     insert into joke_img
@@ -145,9 +142,6 @@
       </if>
       <if test="userId != null" >
         user_id,
-      </if>
-      <if test="likeCount != null" >
-        like_count,
       </if>
       <if test="content != null" >
         content,
@@ -165,9 +159,6 @@
       </if>
       <if test="userId != null" >
         #{userId,jdbcType=VARCHAR},
-      </if>
-      <if test="likeCount != null" >
-        #{likeCount,jdbcType=INTEGER},
       </if>
       <if test="content != null" >
         #{content,jdbcType=LONGVARCHAR},
@@ -195,9 +186,6 @@
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=VARCHAR},
       </if>
-      <if test="record.likeCount != null" >
-        like_count = #{record.likeCount,jdbcType=INTEGER},
-      </if>
       <if test="record.content != null" >
         content = #{record.content,jdbcType=LONGVARCHAR},
       </if>
@@ -212,7 +200,6 @@
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       image_url = #{record.imageUrl,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
-      like_count = #{record.likeCount,jdbcType=INTEGER},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -223,8 +210,7 @@
     set joke_id = #{record.jokeId,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       image_url = #{record.imageUrl,jdbcType=VARCHAR},
-      user_id = #{record.userId,jdbcType=VARCHAR},
-      like_count = #{record.likeCount,jdbcType=INTEGER}
+      user_id = #{record.userId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -241,9 +227,6 @@
       <if test="userId != null" >
         user_id = #{userId,jdbcType=VARCHAR},
       </if>
-      <if test="likeCount != null" >
-        like_count = #{likeCount,jdbcType=INTEGER},
-      </if>
       <if test="content != null" >
         content = #{content,jdbcType=LONGVARCHAR},
       </if>
@@ -255,7 +238,6 @@
     set update_time = #{updateTime,jdbcType=TIMESTAMP},
       image_url = #{imageUrl,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=VARCHAR},
-      like_count = #{likeCount,jdbcType=INTEGER},
       content = #{content,jdbcType=LONGVARCHAR}
     where joke_id = #{jokeId,jdbcType=VARCHAR}
   </update>
@@ -263,8 +245,7 @@
     update joke_img
     set update_time = #{updateTime,jdbcType=TIMESTAMP},
       image_url = #{imageUrl,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=VARCHAR},
-      like_count = #{likeCount,jdbcType=INTEGER}
+      user_id = #{userId,jdbcType=VARCHAR}
     where joke_id = #{jokeId,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -25,5 +25,5 @@ public class LogConstant {
 	/**
 	 * 用户登录信息的userid 的 session 的 key值
 	 */
-	public static final String LOGIN_USERID = "login_user_userid";
+	public static final String LOGIN_USERID = "userid";
 }

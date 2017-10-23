@@ -40,9 +40,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				OutputStream out = response.getOutputStream();
 				PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, "utf-8"));
 				pw.println("{\n" + 
-						"message: \"请先登录\",\n" + 
-						"code: 2,\n" + 
-						"data: null"+
+						"\"message\":\"请先登录\",\n" + 
+						"\"code\":2"+
 						"}");
 				pw.flush();
 				pw.close();

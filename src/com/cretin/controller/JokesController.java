@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cretin.app.BaseResponce;
 import com.cretin.app.LogConstant;
 import com.cretin.intercepter.Login;
-import com.cretin.po.JokeContent;
-import com.cretin.po.JokeImg;
 import com.cretin.po.vo.JokeContentVo;
 import com.cretin.po.vo.JokeImageVo;
 import com.cretin.po.vo.JokesQueryVo;
@@ -49,15 +47,43 @@ public class JokesController {
 	 * @return
 	 */
 	@RequestMapping("/jokesList")
-	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesList(Integer page) {
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesList(Integer page,HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeContentVo>> responce = null;
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		System.out.println("userid-----"+userid);
+		System.out.println("sessionid------"+session.getId());
 		if (page == null) {
 			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 			responce.setMessage("page不能为空");
 			return responce;
 		}
 		try {
-			responce = jokesService.findJokesList(page);
+			responce = jokesService.findJokesList(page,userid);
+		} catch (Exception e) {
+			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
+			responce.setMessage("服务器异常");
+		}
+		return responce;
+	}
+	
+
+	/**
+	 * 分页查询推荐的文字段子
+	 * 
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping("/jokesRecList")
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesRecList(Integer page,HttpSession session) {
+		BaseResponce<JokesQueryVo<JokeContentVo>> responce = null;
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		if (page == null) {
+			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
+			responce.setMessage("page不能为空");
+			return responce;
+		}
+		try {
+			responce = jokesService.findJokesRecList(page,userid);
 		} catch (Exception e) {
 			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 			responce.setMessage("服务器异常");
@@ -72,15 +98,40 @@ public class JokesController {
 	 * @return
 	 */
 	@RequestMapping("/jokesImgList")
-	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgList(Integer page) {
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgList(Integer page,HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeImageVo>> responce = null;
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
 		if (page == null) {
 			responce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
 			responce.setMessage("page不能为空");
 			return responce;
 		}
 		try {
-			responce = jokesService.findJokesImgList(page);
+			responce = jokesService.findJokesImgList(page,userid);
+		} catch (Exception e) {
+			responce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
+			responce.setMessage("服务器异常");
+		}
+		return responce;
+	}
+
+	/**
+	 * 分页查询推荐图片段子
+	 * 
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping("/jokesImgRecList")
+	public @ResponseBody BaseResponce<JokesQueryVo<JokeImageVo>> jokesImgRecList(Integer page,HttpSession session) {
+		BaseResponce<JokesQueryVo<JokeImageVo>> responce = null;
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		if (page == null) {
+			responce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
+			responce.setMessage("page不能为空");
+			return responce;
+		}
+		try {
+			responce = jokesService.findJokesImgRecList(page,userid);
 		} catch (Exception e) {
 			responce = new BaseResponce<JokesQueryVo<JokeImageVo>>();
 			responce.setMessage("服务器异常");

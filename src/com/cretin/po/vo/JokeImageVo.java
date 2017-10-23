@@ -24,6 +24,15 @@ public class JokeImageVo {
 	private CustomerUserVo orignUser;
 	private String jokeId;
 	private int likeCount;
+	private int hasSpot;
+
+	public int getHasSpot() {
+		return hasSpot;
+	}
+
+	public void setHasSpot(int hasSpot) {
+		this.hasSpot = hasSpot;
+	}
 
 	public int getLikeCount() {
 		return likeCount;

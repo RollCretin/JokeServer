@@ -29,21 +29,41 @@ public interface JokesService {
 
 	/**
 	 * 文字段子分页查询
+	 * @param userid 用户查询点赞数
 	 * 
 	 * @param itemsQueryVo
 	 * @return
 	 * @throws Exception
 	 */
-	public BaseResponce<JokesQueryVo<JokeContentVo>> findJokesList(Integer page) throws Exception;
+	public BaseResponce<JokesQueryVo<JokeContentVo>> findJokesList(Integer page, String userid) throws Exception;
+	
+
+	/**
+	 * 推荐文字段子分页查询
+	 * @param userid 用户查询点赞数
+	 * @param itemsQueryVo
+	 * @return
+	 * @throws Exception
+	 */
+	public BaseResponce<JokesQueryVo<JokeContentVo>> findJokesRecList(Integer page, String userid) throws Exception;
 
 	/**
 	 * 图片段子分页查询
-	 * 
+	 * @param userid 用户查询点赞数
 	 * @param page
 	 * @return
 	 * @throws Exception
 	 */
-	public BaseResponce<JokesQueryVo<JokeImageVo>> findJokesImgList(Integer page) throws Exception;
+	public BaseResponce<JokesQueryVo<JokeImageVo>> findJokesImgList(Integer page, String userid) throws Exception;
+	
+	/**
+	 * 推荐图片段子分页查询
+	 * @param userid 用户查询点赞数
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
+	public BaseResponce<JokesQueryVo<JokeImageVo>> findJokesImgRecList(Integer page, String userid) throws Exception;
 
 	/**
 	 * 给指定的jokes点赞 点赞成功返回1 点赞失败返回0 已点赞返回2
