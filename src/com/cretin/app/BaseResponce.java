@@ -23,6 +23,24 @@ public class BaseResponce<T> {
 	// 返回数据
 	private T data;
 
+	/**
+	 * @param message
+	 * @param code
+	 */
+	public BaseResponce(int code, String message) {
+		super();
+		this.message = message;
+		this.code = code;
+	}
+
+	/**
+	 * @param message
+	 * @param code
+	 */
+	public BaseResponce() {
+		super();
+	}
+
 	public String getMessage() {
 		return message;
 	}

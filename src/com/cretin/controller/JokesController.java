@@ -140,7 +140,7 @@ public class JokesController {
 	}
 
 	/**
-	 * 点赞
+	 * 文字段子点赞
 	 * 
 	 * @param jokes_id
 	 * @param session
@@ -173,7 +173,7 @@ public class JokesController {
 	}
 
 	/**
-	 * 取消点赞
+	 * 文字段子取消点赞
 	 * @param jokes_id
 	 * @param session
 	 * @return
@@ -203,5 +203,69 @@ public class JokesController {
 		}
 		return baseResponce;
 	}
-
+	
+	/**
+	 * 点赞
+	 * 
+	 * @param jokes_id
+	 * @param session
+	 * @return
+	 */
+	@Login
+	@RequestMapping("/img/like")
+	public @ResponseBody BaseResponce<?> jokesImgLike(String jokes_id, HttpSession session) {
+		BaseResponce<?> baseResponce = new BaseResponce<>();
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		try {
+			int status = jokesService.like(jokes_id, userid,1);
+			// 点赞成功返回1 点赞失败返回0 已点赞返回2
+			if (status == 1) {
+				baseResponce.setCode(1);
+				baseResponce.setMessage("点赞成功");
+			} else if (status == 2) {
+				baseResponce.setCode(0);
+				baseResponce.setMessage("您已经点过赞");
+			} else {
+				baseResponce.setCode(0);
+				baseResponce.setMessage("点赞失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			baseResponce.setCode(0);
+			baseResponce.setMessage("服务器异常");
+		}
+		return baseResponce;
+	}
+	
+	/**
+	 * 文字段子取消点赞
+	 * @param jokes_id
+	 * @param session
+	 * @return
+	 */
+	@Login
+	@RequestMapping("/img/unlike")
+	public @ResponseBody BaseResponce<?> jokesImgUnlike(String jokes_id, HttpSession session) {
+		BaseResponce<?> baseResponce = new BaseResponce<>();
+		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
+		try {
+			int status = jokesService.unlike(jokes_id, userid,1);
+			// 点赞成功返回1 点赞失败返回0 已点赞返回2
+			if (status == 1) {
+				baseResponce.setCode(1);
+				baseResponce.setMessage("取消点赞成功");
+			} else if (status == 2) {
+				baseResponce.setCode(0);
+				baseResponce.setMessage("请先点赞再取消");
+			} else {
+				baseResponce.setCode(0);
+				baseResponce.setMessage("取消点赞失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			baseResponce.setCode(0);
+			baseResponce.setMessage("服务器异常");
+		}
+		return baseResponce;
+	}
 }
