@@ -59,8 +59,6 @@ public class JokesController {
 	public @ResponseBody BaseResponce<JokesQueryVo<JokeContentVo>> jokesList(Integer page, HttpSession session) {
 		BaseResponce<JokesQueryVo<JokeContentVo>> responce = null;
 		String userid = (String) session.getAttribute(LogConstant.LOGIN_USERID);
-		System.out.println("userid-----" + userid);
-		System.out.println("sessionid------" + session.getId());
 		if (page == null) {
 			responce = new BaseResponce<JokesQueryVo<JokeContentVo>>();
 			responce.setMessage("page不能为空");
@@ -304,7 +302,7 @@ public class JokesController {
 	        int year = cal.get(Calendar.YEAR);//获取年份
 	        int month=cal.get(Calendar.MONTH);//获取月份 
 	        int day=cal.get(Calendar.DATE);//获取日 
-			String newFileName = "jokes/"+year+"/"+month+"/"+day+"/"+UUIDUtils.getUuid() + originalFilename.substring(originalFilename.lastIndexOf("."));
+			String newFileName = "joke/"+year+"/"+month+"/"+day+"/"+UUIDUtils.getUuid() + originalFilename.substring(originalFilename.lastIndexOf("."));
 			// 新图片
 			File newFile = new File(pic_path + newFileName);
 			if(!newFile.exists())

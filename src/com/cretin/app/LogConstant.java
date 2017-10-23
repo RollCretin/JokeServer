@@ -29,5 +29,5 @@ public class LogConstant {
 	/**
 	 * 存放图片的路径根目录
 	 */
-	public static final String PIC_DEIRECTORY = "/Users/cretin/jokesPic/";
+	public static final String PIC_DEIRECTORY = "H:\\jokesPic\\";
 }

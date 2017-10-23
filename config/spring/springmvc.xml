@@ -17,8 +17,8 @@
 	<context:component-scan base-package="com.cretin.controller"></context:component-scan>
 
 	<!-- 静态资源解析 包括 ：js、css、img、.. -->
-	<mvc:resources location="/js/" mapping="/js/**" />
-	<mvc:resources location="/img/" mapping="/img/**" />
+	<!--<mvc:resources location="//js//" mapping="//js//**" />
+	<mvc:resources location="//img//" mapping="//img//**" />-->
 
 
 	<!--注解映射器 -->
